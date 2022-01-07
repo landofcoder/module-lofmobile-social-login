@@ -7,7 +7,7 @@
 
 declare(strict_types=1);
 
-namespace Lof\DeliveryPerson\Helper;
+namespace Lofmobile\SocialLogin\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Store\Model\StoreManagerInterface;

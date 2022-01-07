@@ -14,7 +14,7 @@
  * version in the future.
  *
  * @category   Landofcoder
- * @package    Lof_DeliveryPerson
+ * @package    Lofmobile_SocialLogin
  * @copyright  Copyright (c) 2021 Landofcoder (https://www.landofcoder.com/)
  * @license    https://landofcoder.com/terms
  */
