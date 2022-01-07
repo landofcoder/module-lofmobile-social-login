@@ -260,7 +260,7 @@ class SocialLoginRepository implements SocialLoginInterface
         $customer->setFirstname($firstName)
                     ->setLastname($lastName)
                     ->setEmail($email)
-                    ->setCustomAttribute('customer_avatar', $avatar);
+                    ->setCustomAttribute('profile_picture', $avatar);
         try {
             // If customer exists existing hash will be used by Repository
             $customer = $this->customerRepository->save($customer);
