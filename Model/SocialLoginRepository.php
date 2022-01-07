@@ -278,7 +278,7 @@ class SocialLoginRepository implements SocialLoginInterface
             $customer->loadByEmail($email);
             $token = $this->tokenModelFactory->create()->createCustomerToken($customer->getId())->getToken();
             return $token;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             if ($customer->getId()) {
                 $this->_registry->register('isSecureArea', true, true);
                 $this->customerRepository->deleteById($customer->getId());
