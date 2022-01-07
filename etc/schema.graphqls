@@ -1,0 +1,434 @@
+type Query {
+
+    deliveryPerson : DeliveryPerson @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPerson") @doc(description: "Query by Query Delivery Person.")
+
+    deliveryPersonStats : DeliveryPersonStats @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonStats") @doc(description: "Query by Query My Delivery Person Stats.") @cache( cacheable: false)
+
+    deliveryPersons (
+        filters: DeliveryPersonPersonFilterInput @doc(description: "Identifies which persons filter inputs to search for and return.")
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional.")
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1.")
+        sort: DeliveryPersonPersonSortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
+    ): DeliveryPersons @resolver(class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersons") @doc(description: "Get delivery persons items") @doc(description: "The delivery persons query searches for persons that match the criteria specified in the search and filter attributes.")
+
+    deliveryPersonOrder (
+        id: Int @doc(description: "Query by id.")
+        order_id: Int = 0 @doc(description: "Query by order_id.")
+    ) : DeliveryPersonOrder @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonOrder") @doc(description: "Query by Query Delivery Order.") @cache( cacheable: false )
+
+    deliveryPersonOrders(
+        filters: DeliveryPersonOrderFilterInput @doc(description: "Identifies which orders filter inputs to search for and return.")
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional.")
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1.")
+        sort: DeliveryPersonOrderSortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
+    ): DeliveryPersonOrders @resolver(class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonOrders") @doc(description: "Get delivery orders items") @doc(description: "The delivery orders query searches for orders that match the criteria specified in the search and filter attributes.")  @cache( cacheable: false )
+
+    deliveryPersonRatings (
+        filters: DeliveryPersonRatingFilterInput @doc(description: "Identifies which rating filter inputs to search for and return.")
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional.")
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1.")
+        sort: DeliveryPersonRatingSortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
+    ) : DeliveryPersonRatings @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonRatings") @doc(description: "Query by Query Delivery Person Rating.")
+
+    myDeliveryOrder (
+        order_id: String! @doc(description: "Query by order_id.")
+    ) : DeliveryPersonOrder @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\MyDeliveryPersonOrder") @doc(description: "Query by Query My Delivery Order.") @cache( cacheable: false)
+}
+
+type Mutation {
+
+    registerDeliveryPerson (
+        input: RegisterDeliveryPersonMutationInput! @doc(description: "Query by DeliveryPersonRatingMutationInput.")
+        password: String! @doc(description: "Query by password.")
+    ) : DeliveryPersonOuput @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\RegisterDeliveryPerson") @doc(description: "Query by Mutation Register Delivery Person.")
+
+    becomeDeliveryPerson (
+        input: BecomeDeliveryPersonMutationInput @doc(description: "Query by BecomeDeliveryPersonMutationInput.")
+    ) : DeliveryPersonOuput @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\BecomeDeliveryPerson") @doc(description: "Query by Mutation Become Delivery Person.")
+
+
+    deliveryPersonRating (
+        input: DeliveryPersonRatingMutationInput @doc(description: "Query by DeliveryPersonRatingMutationInput.")
+    ) : DeliveryPersonRating @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonSubmitRating") @doc(description: "Query by Mutation Delivery Person Rating.")
+
+    deliveryPersonComment (
+        input: DeliveryPersonCommentMutationInput @doc(description: "Query by DeliveryPersonCommentMutationInput.")
+    ) : DeliveryPersonOrderComment @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonComment") @doc(description: "Query by Mutation Delivery Person Order Comment.")
+
+    processDeliveryOrder (
+        input: ProcessDeliveryOrderMutationInput @doc(description: "Query by ProcessDeliveryOrderMutationInput.")
+    ) : DeliveryPersonOrder @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryOrderProcess") @doc(description: "Query by Mutation Delivery Person Order Process Order.")
+
+    deliveryPersonGps (
+        input: DeliveryPersonGpsMutationInput @doc(description: "Query by DeliveryPersonGpsMutationInput.")
+    ) : DeliveryPersonOuput @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonUpdateGps") @doc(description: "Query by Mutation Delivery Person submit current GPS.")
+
+    deliveryPersonUpdateProfile (
+        input: DeliveryPersonProfileMutationInput @doc(description: "Query by DeliveryPersonProfileMutationInput.")
+    ) : DeliveryPersonOuput @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonUpdateProfile") @doc(description: "Query by Mutation Delivery Person submit profile.")
+}
+
+type Customer {
+    deliveryPerson: DeliveryPerson @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPerson") @doc(description: "Query by Query Delivery Person.")
+}
+
+enum DeliveryOrderProcessType {
+    accept
+    reject
+    deliveried
+    pickup
+    comment
+}
+
+enum VehicleType {
+    none
+    bus
+    cycle
+    motorcycle
+    ship
+}
+
+type DeliveryPerson {
+
+    entity_id  : Int  @doc(description: "Query by entity_id.")
+    email  : String  @doc(description: "Query by email.")
+    phone  : String  @doc(description: "Query by phone.")
+    store_id  : Int  @doc(description: "Query by store_id.")
+    first_name  : String  @doc(description: "Query by first_name.")
+    last_name  : String  @doc(description: "Query by last_name.")
+    vendor_id  : String  @doc(description: "Query by vendor_id.")
+    vehicle_type  : String  @doc(description: "Query by vehicle_type.")
+    vehicle_number  : String  @doc(description: "Query by vehicle_number.")
+    full_address  : String  @doc(description: "Query by full_address.")
+    current_lat  : Float  @doc(description: "Query by current_lat.")
+    current_lng  : Float  @doc(description: "Query by current_lng.")
+    avatar  : String  @doc(description: "Query by avatar.")
+    is_online  : Int  @doc(description: "Query by is_online.")
+    created_at  : String  @doc(description: "Query by created_at.")
+    orders(
+        filters: DeliveryPersonOrderFilterInput @doc(description: "Identifies which orders filter inputs to search for and return.")
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional.")
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1.")
+        sort: DeliveryPersonOrderSortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
+    ): DeliveryPersonOrders @resolver(class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonOrders") @doc(description: "Get delivery orders items") @doc(description: "The delivery orders query searches for orders that match the criteria specified in the search and filter attributes.")  @cache( cacheable: false )
+    ratings (
+        filters: DeliveryPersonRatingFilterInput @doc(description: "Identifies which rating filter inputs to search for and return.")
+        pageSize: Int = 20 @doc(description: "Specifies the maximum number of results to return at once. This attribute is optional.")
+        currentPage: Int = 1 @doc(description: "Specifies which page of results to return. The default value is 1.")
+        sort: DeliveryPersonRatingSortInput @doc(description: "Specifies which attributes to sort on, and whether to return the results in ascending or descending order.")
+    ) : DeliveryPersonRatings @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonRatings") @doc(description: "Query by Query Delivery Person Rating.") @cache( cacheIdentity: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonRatings\\Identity")
+    reports : DeliveryPersonReports @resolver( class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonReports") @doc(description: "Query by Query My Delivery Person Reports.") @cache( cacheable: false)
+
+}
+
+type DeliveryPersonOuput {
+    deliveryPerson: DeliveryPerson!
+}
+
+type DeliveryStats {
+    total_orders: Int @doc(description: "Query by total_orders.")
+    total_pending_orders: Int @doc(description: "Query by total_orders.")
+    total_processing_orders: Int @doc(description: "Query by total_processing_orders.")
+    total_completed_orders: Int @doc(description: "Query by total_completed_orders.")
+    total_notification: Int @doc(description: "Query by total_notification.")
+    total_ratings: Int @doc(description: "Query by total_ratings.")
+    total_score: Float @doc(description: "Query by total_score.")
+    total_balance: Float @doc(description: "Query by total_balance.")
+}
+
+type DeliveryPersonRating {
+    entity_id  : Int  @doc(description: "Query by entity_id.")
+    order_id  : Int  @doc(description: "Query by order_id.")
+    customer_id  : Int  @doc(description: "Query by customer_id.")
+    delivery_boy_email  : String  @doc(description: "Query by delivery_boy_email.")
+    rating  : Float  @doc(description: "Query by rating.")
+    status  : Int  @doc(description: "Query by status.")
+    title  : String  @doc(description: "Query by title.")
+    comment  : String  @doc(description: "Query by comment.")
+    created_at  : String  @doc(description: "Query by created_at.")
+}
+
+type DeliveryPersonOrderComment {
+
+    entity_id  : Int  @doc(description: "Query by entity_id.")
+    order_id  : Int  @doc(description: "Query by order_id.")
+    delivery_boy_id  : Int  @doc(description: "Query by delivery_boy_id.")
+    created_by_name  : Int  @doc(description: "Query by created_by_name.")
+    comment  : String  @doc(description: "Query by comment.")
+    is_comment  : Int  @doc(description: "Query by is_comment.")
+    is_note  : Int  @doc(description: "Query by is_note.")
+    created_at  : String  @doc(description: "Query by created_at.")
+}
+
+type DeliveryOrderDetail {
+    increment_id : String  @doc(description: "Query by increment_id.")
+}
+
+type DeliveryPersonOrder {
+    entity_id: Int  @doc(description: "Query by entity_id.")
+    order_id  : Int  @doc(description: "Query by order_id.")
+    customer_phone  : String  @doc(description: "Query by customer_phone.")
+    customer_firstname  : String  @doc(description: "Query by customer_firstname.")
+    customer_lastname  : String  @doc(description: "Query by customer_lastname.")
+    shipment_region_id : String @doc(description: "Query by shipment_region_id.")
+    shipment_zipcode : String @doc(description: "Query by shipment_zipcode.")
+    shipment_address1 : String @doc(description: "Query by shipment_address1.")
+    shipment_address2 : String @doc(description: "Query by shipment_address2.")
+    deliveried_at : String @doc(description: "Query by deliveried_at.")
+    shipment_country_id : String @doc(description: "Query by shipment_country_id.")
+    delivery_boy_phone : String @doc(description: "Query by delivery_boy_phone.")
+    pickup_at : String @doc(description: "Query by pickup_at.")
+    delivery_boy_email : String @doc(description: "Query by delivery_boy_email.")
+    store_id  : Int  @doc(description: "Query by store_id.")
+    status  : String  @doc(description: "Query by status.")
+    order_otp : String  @doc(description: "Query by order_otp.")
+    shipment_address_lat  : String  @doc(description: "Query by shipment_address_lat.")
+    shipment_address_lng  : String  @doc(description: "Query by shipment_address_lng.")
+    shipping_address  : String  @doc(description: "Query by shipping_address.")
+    warehouse_address  : String  @doc(description: "Query by warehouse_address.")
+    warehouse_lat  : String  @doc(description: "Query by warehouse_lat.")
+    warehouse_lng  : String  @doc(description: "Query by warehouse_lng.")
+    delivery_comment  : String  @doc(description: "Query by delivery_comment.")
+    delivery_time  : String  @doc(description: "Query by delivery_time.")
+    shipping_amount : Float  @doc(description: "Query by shipping_amount.")
+    vendor_id  : Int  @doc(description: "Query by vendor_id.")
+    created_at : String @doc(description: "Query by created_at.")
+    updated_at : String @doc(description: "Query by updated_at.")
+    delivery_boy : DeliveryPerson @doc(description: "Query by Delivery Boy.")
+    order_detail : DeliveryOrderDetail @doc(description: "Query by DeliveryOrderDetail.")
+    order_comments : [DeliveryPersonOrderComment] @doc(description: "Query by DeliveryPersonOrderComment.")
+}
+
+type DeliveryPersonStats {
+    entity_id  : Int  @doc(description: "Query by entity_id.")
+    email  : String  @doc(description: "Query by email.")
+    phone  : String  @doc(description: "Query by phone.")
+    store_id  : Int  @doc(description: "Query by store_id.")
+    first_name  : String  @doc(description: "Query by first_name.")
+    last_name  : String  @doc(description: "Query by last_name.")
+    vendor_id  : String  @doc(description: "Query by vendor_id.")
+    vehicle_type  : String  @doc(description: "Query by vehicle_type.")
+    vehicle_number  : String  @doc(description: "Query by vehicle_number.")
+    full_address  : String  @doc(description: "Query by full_address.")
+    current_lat  : String  @doc(description: "Query by current_lat.")
+    current_lng  : String  @doc(description: "Query by current_lng.")
+    avatar  : String  @doc(description: "Query by avatar.")
+    is_online  : Int  @doc(description: "Query by is_online.")
+    created_at  : String  @doc(description: "Query by created_at.")
+    reports : DeliveryStats @doc(description: "Query by reports.")
+    ratings : [DeliveryPersonRating] @doc(description: "Query by ratings.")
+    pending_orders : [DeliveryPersonOrder] @doc(description: "Query by pending_orders.")
+    processing_orders : [DeliveryPersonOrder] @doc(description: "Query by processing_orders.")
+    deliveried_orders : [DeliveryPersonOrder] @doc(description: "Query by deliveried_orders.")
+}
+
+type DeliveryPersonReports {
+    statistics : DeliveryStats @doc(description: "Query by statistics.")
+    pending_orders : [DeliveryPersonOrder] @doc(description: "Query by pending_orders.")
+    processing_orders : [DeliveryPersonOrder] @doc(description: "Query by processing_orders.")
+    deliveried_orders : [DeliveryPersonOrder] @doc(description: "Query by deliveried_orders.")
+}
+
+type DeliveryPersonOrders @doc(description: "The delivery orders object is the top-level object returned in a slider search.") {
+    items: [DeliveryPersonOrder] @doc(description: "An array of delivery order that match the specified search criteria.")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
+    total_count: Int @doc(description: "The number of delivery order that are marked as visible. By default, in complex delivery orders, parent delivery orders are visible, but their child delivery order are not.")
+    sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields.") @resolver(class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonOrder\\SortFields")
+}
+
+type DeliveryPersons @doc(description: "The delivery persons object is the top-level object returned in a persons search.") {
+    items: [DeliveryPerson] @doc(description: "An array of delivery persons that match the specified search criteria.")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
+    total_count: Int @doc(description: "The number of delivery persons that are marked as visible. By default, in complex delivery personss, parent delivery orders are visible, but their child delivery persons are not.")
+    sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields.") @resolver(class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPerson\\SortFields")
+}
+
+type DeliveryPersonRatings @doc(description: "The delivery ratings object is the top-level object returned in a ratings search.") {
+    items: [DeliveryPersonRating] @doc(description: "An array of delivery ratings that match the specified search criteria.")
+    page_info: SearchResultPageInfo @doc(description: "An object that includes the page_info and currentPage values specified in the query.")
+    total_count: Int @doc(description: "The number of delivery ratings that are marked as visible. By default, in complex delivery ratings, parent delivery orders are visible, but their child delivery ratings are not.")
+    sort_fields: SortFields @doc(description: "An object that includes the default sort field and all available sort fields.") @resolver(class: "Lof\\DeliveryPerson\\Model\\Resolver\\DeliveryPersonRatings\\SortFields")
+}
+
+input DeliveryPersonOrderFilterInput  @doc(description: "DeliveryPersonOrderFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.")
+{
+    entity_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order entity_id")
+    order_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order order_id")
+    store_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order store_id")
+    status: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order Featured")
+    delivery_boy_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order delivery_boy_id")
+    delivery_boy_email: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order delivery_boy_email")
+    customer_phone: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order customer_phone")
+    shipment_country_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order shipment_country_id")
+    shipment_region_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order shipment_region_id")
+    shipment_zipcode: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order shipment_zipcode")
+    delivery_boy_phone: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order delivery_boy_phone")
+    customer_firstname: FilterMatchTypeInput @deprecated(reason: "Filter Delivery order customer_firstname")
+    customer_lastname: FilterMatchTypeInput @deprecated(reason: "Filter Delivery order customer_lastname")
+    shipment_address1: FilterMatchTypeInput @deprecated(reason: "Filter Delivery order shipment_address1")
+    shipment_address2: FilterMatchTypeInput @deprecated(reason: "Filter Delivery order shipment_address2")
+    vendor_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order vendor_id")
+    delivery_comment: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order delivery_comment")
+    shipping_address: FilterMatchTypeInput @deprecated(reason: "Filter Delivery order shipping_address")
+    shipment_address_lat: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order shipment_address_lat")
+    shipment_address_lng: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order shipment_address_lng")
+    warehouse_address: FilterMatchTypeInput @deprecated(reason: "Filter Delivery order warehouse_address")
+    warehouse_lat: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order warehouse_lat")
+    warehouse_lng: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order warehouse_lng")
+    created_at: FilterMatchTypeInput @doc(description: "Filter Timestamp indicating when the order was created")
+    updated_at: FilterMatchTypeInput @doc(description: "Filter Timestamp indicating when the order was updated")
+    pickup_at: FilterMatchTypeInput @doc(description: "Filter Timestamp indicating when the order was pickup_at")
+    deliveried_at: FilterMatchTypeInput @doc(description: "Filter Timestamp indicating when the order was deliveried_at")
+    delivery_time: FilterMatchTypeInput @doc(description: "Filter Timestamp indicating when the order was delivery_time")
+}
+
+input DeliveryPersonPersonFilterInput  @doc(description: "DeliveryPersonPersonFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.")
+{
+    entity_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery person entity_id")
+    store_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery store_id")
+    status: FilterEqualTypeInput @deprecated(reason: "Filter Delivery status")
+    email: FilterEqualTypeInput @deprecated(reason: "Filter Delivery person email")
+    first_name: FilterMatchTypeInput @deprecated(reason: "Filter Delivery person first_name")
+    last_name: FilterMatchTypeInput @deprecated(reason: "Filter Delivery person last_name")
+    vendor_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery person vendor_id")
+    vehicle_type: FilterEqualTypeInput @deprecated(reason: "Filter Delivery person vehicle_type")
+    vehicle_number: FilterEqualTypeInput @deprecated(reason: "Filter Delivery person vehicle_number")
+    full_address: FilterMatchTypeInput @deprecated(reason: "Filter Delivery person full_address")
+    current_lat: FilterMatchTypeInput @deprecated(reason: "Filter Delivery person current_lat")
+    current_lng: FilterMatchTypeInput @deprecated(reason: "Filter Delivery person current_lng")
+    is_online: FilterMatchTypeInput @deprecated(reason: "Filter Delivery person is_online")
+    created_at: FilterMatchTypeInput @deprecated(reason: "Filter Delivery person created_at")
+}
+
+input DeliveryPersonRatingFilterInput  @doc(description: "DeliveryPersonRatingFilterInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.")
+{
+    entity_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery entity_id")
+    order_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery order_id")
+    status: FilterEqualTypeInput @deprecated(reason: "Filter Delivery status")
+    delivery_boy_email: FilterEqualTypeInput @deprecated(reason: "Filter Delivery delivery_boy_email")
+    customer_id: FilterEqualTypeInput @deprecated(reason: "Filter Delivery customer_id")
+    rating: FilterEqualTypeInput @deprecated(reason: "Filter Delivery rating")
+    title: FilterMatchTypeInput @deprecated(reason: "Filter Delivery title")
+    comment: FilterMatchTypeInput @deprecated(reason: "Filter Delivery comment")
+    created_at: FilterMatchTypeInput @deprecated(reason: "Filter Delivery created_at")
+}
+
+input DeliveryPersonOrderSortInput @doc(description: "DeliveryPersonOrderSortInput specifies the attribute to use for sorting search results and indicates whether the results are sorted in ascending or descending order. It's possible to sort orders using searchable attributes with enabled 'Use in Filter Options' option")
+{
+    entity_id: SortEnum @doc(description: "Sort by the entity_id assigned to each order.")
+    created_at: SortEnum @doc(description: "Sort by the created_at (default).")
+    updated_at: SortEnum @doc(description: "Sort by the updated_at assigned to each order.")
+    status: SortEnum @doc(description: "Sort by the status assigned to each order.")
+    pickup_at: SortEnum @doc(description: "Sort by the pickup_at assigned to each order.")
+    deliveried_at: SortEnum @doc(description: "Sort by the deliveried_at assigned to each order.")
+    delivery_time: SortEnum @doc(description: "Sort by the delivery_time assigned to each order.")
+    order_id: SortEnum @doc(description: "Sort by the order_id assigned to each order.")
+    store_id: SortEnum @doc(description: "Sort by the store_id assigned to each order.")
+    vendor_id: SortEnum @doc(description: "Sort by the vendor_id assigned to each order.")
+    shipment_country_id: SortEnum @doc(description: "Sort by the shipment_country_id assigned to each order.")
+    shipment_region_id: SortEnum @doc(description: "Sort by the shipment_region_id assigned to each order.")
+    shipment_zipcode: SortEnum @doc(description: "Sort by the shipment_zipcode assigned to each order.")
+}
+
+
+input DeliveryPersonPersonSortInput @doc(description: "DeliveryPersonPersonSortInput specifies the attribute to use for sorting search results and indicates whether the results are sorted in ascending or descending delivery persons. It's possible to sort delivery persons using searchable attributes with enabled 'Use in Filter Options' option")
+{
+    entity_id: SortEnum @doc(description: "Sort by the entity_id assigned to each order (default).")
+    email: SortEnum @doc(description: "Sort by the email.")
+    phone: SortEnum @doc(description: "Sort by the phone assigned to each order.")
+    store_id: SortEnum @doc(description: "Sort by the store_id assigned to each order.")
+    first_name: SortEnum @doc(description: "Sort by the first_name assigned to each order.")
+    last_name: SortEnum @doc(description: "Sort by the last_name assigned to each order.")
+    vendor_id: SortEnum @doc(description: "Sort by the vendor_id assigned to each order.")
+    vehicle_type: SortEnum @doc(description: "Sort by the vehicle_type assigned to each order.")
+    vehicle_number: SortEnum @doc(description: "Sort by the vehicle_number assigned to each order.")
+    current_lat: SortEnum @doc(description: "Sort by the current_lat assigned to each order.")
+    current_lng: SortEnum @doc(description: "Sort by the current_lng assigned to each order.")
+    is_online: SortEnum @doc(description: "Sort by the is_online assigned to each order.")
+    created_at: SortEnum @doc(description: "Sort by the created_at assigned to each order.")
+}
+
+input DeliveryPersonRatingSortInput @doc(description: "DeliveryPersonRatingSortInput specifies the attribute to use for sorting search results and indicates whether the results are sorted in ascending or descending ratings. It's possible to sort ratings using searchable attributes with enabled 'Use in Filter Options' option")
+{
+    entity_id: SortEnum @doc(description: "Sort by the entity_id assigned to each order (default).")
+    order_id: SortEnum @doc(description: "Sort by the order_id.")
+    delivery_boy_email: SortEnum @doc(description: "Sort by the delivery_boy_email assigned to each order.")
+    rating: SortEnum @doc(description: "Sort by the rating assigned to each order.")
+    title: SortEnum @doc(description: "Sort by the title assigned to each order.")
+    status: SortEnum @doc(description: "Sort by the status assigned to each order.")
+    created_at: SortEnum @doc(description: "Sort by the created_at assigned to each order.")
+}
+
+input DeliveryPersonRatingMutationInput {
+    order_id: String @doc(description: "Query by order_id.")
+    delivery_boy_id: String @doc(description: "Query by customer_id.")
+    rating: Float! = 5 @doc(description: "Query by rating.")
+    title: String @doc(description: "Query by title.")
+    comment: String @doc(description: "Query by comment.")
+}
+
+input DeliveryPersonCommentMutationInput {
+    order_id: String @doc(description: "Query by order_id.")
+    comment: String @doc(description: "Query by comment.")
+}
+
+input ProcessDeliveryOrderMutationInput {
+    id: Int! @doc(description: "Query by delivery order id.")
+    process_type: DeliveryOrderProcessType! @doc(description: "Query by process_type: accept, reject, deliveried, pickup, comment.")
+    comment: String @doc(description: "Query by comment.")
+    otp: String @doc(description: "Query by otp.")
+}
+
+input DeliveryPersonGpsMutationInput {
+    current_lat: Float! @doc(description: "Query by delivery person current_lat.")
+    current_lng: Float! @doc(description: "Query by delivery person current_lng.")
+}
+
+input DeliveryPersonProfileMutationInput {
+    phone  : String  @doc(description: "Query by phone.")
+    first_name  : String  @doc(description: "Query by first_name.")
+    last_name  : String  @doc(description: "Query by last_name.")
+    vehicle_type  : String  @doc(description: "Query by vehicle_type.")
+    vehicle_number  : String  @doc(description: "Query by vehicle_number.")
+    full_address  : String  @doc(description: "Query by full_address.")
+    avatar  : String  @doc(description: "Query by avatar.")
+    is_online  : Int  @doc(description: "Query by is_online.")
+}
+
+input RegisterDeliveryPersonMutationInput {
+    first_name  : String  @doc(description: "Query by first_name.")
+    last_name  : String  @doc(description: "Query by last_name.")
+    phone  : String  @doc(description: "Query by phone.")
+    email  : String  @doc(description: "Query by email.")
+    vehicle_type  : String  @doc(description: "Query by vehicle_type.")
+    vehicle_number  : String  @doc(description: "Query by vehicle_number.")
+    is_online  : Int  @doc(description: "Query by is_online.")
+}
+
+
+input BecomeDeliveryPersonMutationInput  @doc(description: "BecomeDeliveryPersonMutationInput defines the filters to be used in the search. A filter contains at least one attribute, a comparison operator, and the value that is being searched for.")
+{
+    vehicle_type  : VehicleType  @doc(description: "Query by vehicle_type.")
+    vehicle_number  : String  @doc(description: "Query by vehicle_number.")
+}
+
+type StoreConfig {
+
+    deliveryboy_enabled  : Int  @doc(description: "Query by deliveryboy_enabled.")
+    deliveryboy_warehouse_address : String @doc(description: "Query by deliveryboy_warehouse_address.")
+    deliveryboy_warehouse_latitude : String @doc(description: "Query by deliveryboy_warehouse_latitude.")
+    deliveryboy_warehouse_longitude : String @doc(description: "Query by deliveryboy_warehouse_longitude.")
+    deliveryboy_delivery_range : String @doc(description: "Query by deliveryboy_delivery_range.")
+    deliveryboy_page_size : Int @doc(description: "Query by deliveryboy_page_size.")
+    deliveryboy_enable_anonymous_registration : Int @doc(description: "Query by deliveryboy_enable_anonymous_registration.")
+    deliveryboy_enable_check_otp : Int @doc(description: "Query by deliveryboy_enable_check_otp.")
+}
+
+type SortField {
+    value: String @doc(description: "Attribute code of sort field.")
+    label: String @doc(description: "Label of sort field.")
+}
+type SortFields @doc(description: "SortFields contains a default value for sort fields and all available sort fields.") {
+    default: String @doc(description: "Default value of sort fields.")
+    options: [SortField] @doc(description: "Available sort fields.")
+}

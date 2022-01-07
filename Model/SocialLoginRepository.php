@@ -24,12 +24,15 @@ declare(strict_types=1);
 namespace Lofmobile\SocialLogin\Model;
 
 use Lofmobile\SocialLogin\Api\SocialLoginInterface;
+use Lofmobile\SocialLogin\Helper\Data;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Customer\Api\Data\CustomerInterfaceFactory;
 use Magento\Customer\Model\Customer;
 use Magento\Customer\Model\CustomerFactory;
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\CouldNotSaveException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\State\InputMismatchException;
 use Magento\Store\Model\StoreManagerInterface;
@@ -67,12 +70,19 @@ class SocialLoginRepository implements SocialLoginInterface
     protected $customerExtensionFactory;
 
     /**
+     * @var Data
+     *
+     */
+    protected $helperData;
+
+    /**
      * Social constructor.
      * @param CustomerFactory $customerFactory
      * @param CustomerInterfaceFactory $customerDataFactory
      * @param CustomerRepositoryInterface $customerRepository
      * @param StoreManagerInterface $storeManager
      * @param TokenModelFactory $tokenModelFactory
+     * @param Data $helperData
      */
     public function __construct(
         CustomerFactory $customerFactory,
@@ -80,7 +90,8 @@ class SocialLoginRepository implements SocialLoginInterface
         CustomerRepositoryInterface $customerRepository,
         StoreManagerInterface $storeManager,
         TokenModelFactory $tokenModelFactory,
-        CustomerExtensionFactory $customerExtensionFactory
+        CustomerExtensionFactory $customerExtensionFactory,
+        Data $helperData
     ) {
         $this->customerFactory = $customerFactory;
         $this->customerRepository = $customerRepository;
@@ -88,6 +99,7 @@ class SocialLoginRepository implements SocialLoginInterface
         $this->storeManager = $storeManager;
         $this->tokenModelFactory = $tokenModelFactory;
         $this->customerExtensionFactory = $customerExtensionFactory;
+        $this->helperData = $helperData;
     }
 
     /**
@@ -112,6 +124,11 @@ class SocialLoginRepository implements SocialLoginInterface
      */
     public function login($token, $type)
     {
+        if (!$this->helperData->isEnabled()) {
+            throw new CouldNotSaveException(__(
+                'Could not call the login feature'
+            ));
+        }
         if ($type == "facebook") {
             $fields = "id,name,first_name,last_name,email,picture.type(large)";
             $url = 'https://graph.facebook.com/me/?fields='.$fields.'&access_token=' . $token;
@@ -209,6 +226,11 @@ class SocialLoginRepository implements SocialLoginInterface
      */
     public function appleLogin($token, $firstName, $lastName)
     {
+        if (!$this->helperData->isEnabled()) {
+            throw new CouldNotSaveException(__(
+                'Could not call the login feature'
+            ));
+        }
         $decoded = $this->jwtDecode($token);
         if (!$decoded) {
             throw new InputMismatchException(
