@@ -20,10 +20,10 @@ interface SocialLoginInterface
      * Apple Login
      *
      * @param string $token
-     * @param string $firstName
-     * @param string $lastName
+     * @param string|null $firstName
+     * @param string|null $lastName
      * @return string Token created
      * @throws \Magento\Framework\Exception\AuthenticationException|Magento\Framework\Exception\State\InputMismatchException|Magento\Framework\Exception\CouldNotSaveException
      */
-    public function appleLogin($token, $firstName, $lastName);
+    public function appleLogin($token, $firstName = null, $lastName = null);
 }
