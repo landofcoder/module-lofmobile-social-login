@@ -224,7 +224,7 @@ class SocialLoginRepository implements SocialLoginInterface
     /**
      * @inheritdoc
      */
-    public function appleLogin($token, $firstName, $lastName)
+    public function appleLogin($token, $firstName = null, $lastName = null)
     {
         if (!$this->helperData->isEnabled()) {
             throw new CouldNotSaveException(__(
