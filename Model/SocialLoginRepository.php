@@ -1,5 +1,28 @@
 <?php
+/**
+ * Landofcoder
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Landofcoder.com license that is
+ * available through the world-wide-web at this URL:
+ * https://landofcoder.com/terms
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ *
+ * @category   Landofcoder
+ * @package    Lof_DeliveryPerson
+ * @copyright  Copyright (c) 2021 Landofcoder (https://www.landofcoder.com/)
+ * @license    https://landofcoder.com/terms
+ */
+
+declare(strict_types=1);
+
 namespace Lofmobile\SocialLogin\Model;
+
 use Lofmobile\SocialLogin\Api\SocialLoginInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Api\Data\CustomerInterface;
@@ -42,6 +65,7 @@ class SocialLoginRepository implements SocialLoginInterface
      * @var CustomerExtensionFactory
      */
     protected $customerExtensionFactory;
+
     /**
      * Social constructor.
      * @param CustomerFactory $customerFactory
@@ -66,13 +90,23 @@ class SocialLoginRepository implements SocialLoginInterface
         $this->customerExtensionFactory = $customerExtensionFactory;
     }
 
-    private function jwtDecode($token){
+    /**
+     * jwt decode
+     *
+     * @param string $token
+     * @return mixed|array|string|null
+     */
+    private function jwtDecode($token)
+    {
         $splitToken = explode(".", $token);
+        if (!isset($splitToken[1])) {
+            return null;
+        }
         $payloadBase64 = $splitToken[1]; // Payload is always the index 1
         $decodedPayload = json_decode(urldecode(base64_decode($payloadBase64)), true);
         return $decodedPayload;
     }
-    
+
     /**
      * @inheritdoc
      */
@@ -105,7 +139,7 @@ class SocialLoginRepository implements SocialLoginInterface
                     __("Your 'token' did not return email of the user. Without 'email' user can't be logged in or registered. Get user email extended permission while joining the Facebook app.")
                 );
             }
-        }elseif($type == "google"){
+        } elseif ($type == "google") {
             $url = 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' . $token;
 
             $ch = curl_init();
@@ -127,7 +161,7 @@ class SocialLoginRepository implements SocialLoginInterface
                     __("Your 'token' did not return email of the user. Without 'email' user can't be logged in or registered. Get user email extended permission while joining the Google app.")
                 );
             }
-        }elseif($type == "sms"){
+        } elseif ($type == "sms") {
             $url = 'https://graph.accountkit.com/v1.3/me/?access_token=' . $token;
 
             $ch = curl_init();
@@ -141,7 +175,7 @@ class SocialLoginRepository implements SocialLoginInterface
             if (isset($result["phone"])) {
                 $firstName = $result["phone"]["country_prefix"];
                 $lastName = $result["phone"]["national_number"];
-                $email = $result["phone"]["national_number"]."@lofmobile.io";
+                $email = $result["phone"]["national_number"]."@landofcoder.com";
                 $avatar = "";
                 return $this->createSocialLogin($firstName, $lastName, $email, $avatar);
             } else {
@@ -149,14 +183,19 @@ class SocialLoginRepository implements SocialLoginInterface
                     __("Your 'token' did not return phone of the user. Without 'phone' user can't be logged in or registered. Get user phone extended permission while joining the app.")
                 );
             }
-        }elseif($type == "firebase_sms"){
-                $firstName = $token;
-                $lastName = "fluxstore";
-                $email = $token."@lofmobile.io";
-                $avatar = "";
-                return $this->createSocialLogin($firstName, $lastName, $email, $avatar);
-        }elseif($type == "apple"){
+        } elseif ($type == "firebase_sms") {
+            $firstName = $token;
+            $lastName = "landofcoder";
+            $email = $token."@landofcoder.com";
+            $avatar = "";
+            return $this->createSocialLogin($firstName, $lastName, $email, $avatar);
+        } elseif ($type == "apple") {
             $decoded = $this->jwtDecode($token);
+            if (!$decoded) {
+                throw new InputMismatchException(
+                    __("Your 'token' is invalid.")
+                );
+            }
 			$email = $decoded["email"];
 			$firstName = explode("@", $email)[0];
 			$lastName = "user";
@@ -171,6 +210,11 @@ class SocialLoginRepository implements SocialLoginInterface
     public function appleLogin($token, $firstName, $lastName)
     {
         $decoded = $this->jwtDecode($token);
+        if (!$decoded) {
+            throw new InputMismatchException(
+                __("Your 'token' is invalid.")
+            );
+        }
 		$email = $decoded["email"];
 		$firstName = isset($firstName) && $firstName != null && $firstName != "" ? $firstName : explode("@", $email)[0];
         $lastName = isset($lastName) && $lastName != null && $lastName != "" ? $lastName : "user";
@@ -178,35 +222,46 @@ class SocialLoginRepository implements SocialLoginInterface
         return $this->createSocialLogin($firstName, $lastName, $email, $avatar);
     }
 
-    private function createSocialLogin($firstName, $lastName, $email, $avatar){
+    /**
+     * Create social login
+     *
+     * @param string $firstName
+     * @param string $lastName
+     * @param string $email
+     * @param string $avatar
+     * @return string
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
+    private function createSocialLogin($firstName, $lastName, $email, $avatar = "")
+    {
         $customer = $this->customerDataFactory->create();
         $customer->setFirstname($firstName)
                     ->setLastname($lastName)
                     ->setEmail($email)
-                    ->setCustomAttribute('customer_avatar',$avatar);
-                try {
-                    // If customer exists existing hash will be used by Repository
-                    $customer = $this->customerRepository->save($customer);
-                    $objectManager = ObjectManager::getInstance();
-                    $mathRandom = $objectManager->get('Magento\Framework\Math\Random');
-                    $newPasswordToken = $mathRandom->getUniqueHash();
-                    $accountManagement = $objectManager->get('Magento\Customer\Api\AccountManagementInterface');
-                    $accountManagement->changeResetPasswordLinkToken($customer, $newPasswordToken);
-                    $token = $this->tokenModelFactory->create()->createCustomerToken($customer->getId())->getToken();
-                    return $token;
-                } catch (AlreadyExistsException $e) {
-                    //email is exist
-                    $customer = $this->customerFactory->create();
-                    $customer->setWebsiteId($this->storeManager->getWebsite()->getId());
-                    $customer->loadByEmail($email);
-                    $token = $this->tokenModelFactory->create()->createCustomerToken($customer->getId())->getToken();
-                    return $token;
-                } catch (Exception $e) {
-                    if ($customer->getId()) {
-                        $this->_registry->register('isSecureArea', true, true);
-                        $this->customerRepository->deleteById($customer->getId());
-                    }
-                    throw $e;
-                }
+                    ->setCustomAttribute('customer_avatar', $avatar);
+        try {
+            // If customer exists existing hash will be used by Repository
+            $customer = $this->customerRepository->save($customer);
+            $objectManager = ObjectManager::getInstance();
+            $mathRandom = $objectManager->get('Magento\Framework\Math\Random');
+            $newPasswordToken = $mathRandom->getUniqueHash();
+            $accountManagement = $objectManager->get('Magento\Customer\Api\AccountManagementInterface');
+            $accountManagement->changeResetPasswordLinkToken($customer, $newPasswordToken);
+            $token = $this->tokenModelFactory->create()->createCustomerToken($customer->getId())->getToken();
+            return $token;
+        } catch (AlreadyExistsException $e) {
+            //email is exist
+            $customer = $this->customerFactory->create();
+            $customer->setWebsiteId($this->storeManager->getWebsite()->getId());
+            $customer->loadByEmail($email);
+            $token = $this->tokenModelFactory->create()->createCustomerToken($customer->getId())->getToken();
+            return $token;
+        } catch (Exception $e) {
+            if ($customer->getId()) {
+                $this->_registry->register('isSecureArea', true, true);
+                $this->customerRepository->deleteById($customer->getId());
+            }
+            throw $e;
+        }
     }
 }
