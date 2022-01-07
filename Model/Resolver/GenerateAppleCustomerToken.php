@@ -49,8 +49,8 @@ class GenerateAppleCustomerToken implements ResolverInterface
             if (empty($args['apple_token'])) {
                 throw new GraphQlInputException(__('"apple_token" value should be specified'));
             }
-            $first_name = isset($args['first_name']) ? $args['first_name'] : "";
-            $last_name = isset($args['last_name']) ? $args['last_name'] : "";
+            $first_name = isset($args['first_name']) ? $args['first_name'] : null;
+            $last_name = isset($args['last_name']) ? $args['last_name'] : null;
             $token = $this->repository->appleLogin($args['apple_token'], $first_name, $last_name);
         }
         return ['token' => $token];
