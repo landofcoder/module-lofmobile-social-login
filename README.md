@@ -33,7 +33,7 @@ Apple login:
 
 ```
 mutation {
-    generateSocialCustomerToken (apple_token: String!, first_name: String, last_name: String) {
+    generateAppleCustomerToken (apple_token: String!, first_name: String, last_name: String) {
         token
     }
 }
