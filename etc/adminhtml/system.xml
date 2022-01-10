@@ -15,6 +15,14 @@
                     <comment/>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="google_sign_in_api" type="text" sortOrder="15" showInWebsite="1" showInStore="1" showInDefault="1" translate="label comment">
+                    <label>Google Sign In Api Key</label>
+                    <comment>Login with account gmail account and go to https://console.cloud.google.com/apis/credentials create api projects. More guide at here: https://developers.google.com/identity/sign-in/web/sign-in</comment>
+                </field>
+                <field id="facebook_app_id" type="text" sortOrder="20" showInWebsite="1" showInStore="1" showInDefault="1" translate="label comment">
+                    <label>Facebook App ID</label>
+                    <comment>Login with facebook account. Create facebook app id</comment>
+                </field>
 			</group>
         </section>
     </system>

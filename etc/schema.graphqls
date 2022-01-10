@@ -12,3 +12,10 @@ enum SocialLoginType @doc(description:"Social Login Type use for Lofmobile_Socia
     firebase_sms
     apple
 }
+
+type StoreConfig {
+
+    lofsociallogin_enabled  : Int  @doc(description: "Query by lofsociallogin_enabled - Social Login Enabled.")
+    lofsociallogin_google_api : String @doc(description: "Query by lofsociallogin_google_api.")
+    lofsociallogin_facebook_app_id : String @doc(description: "Query by lofsociallogin_facebook_app_id.")
+}

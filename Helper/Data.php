@@ -24,15 +24,23 @@ class Data extends AbstractHelper
     protected $_storeManager;
 
     /**
+     * @var \Magento\Framework\Serialize\SerializerInterface
+     */
+    protected $serializer;
+
+    /**
      * Data constructor.
      * @param \Magento\Framework\App\Helper\Context $context
      * @param StoreManagerInterface $storeManager
+     * @param \Magento\Framework\Serialize\SerializerInterface $serializer
      */
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
-        StoreManagerInterface $storeManager
+        StoreManagerInterface $storeManager,
+        \Magento\Framework\Serialize\SerializerInterface $serializer
     ) {
         $this->_storeManager = $storeManager;
+        $this->serializer = $serializer;
         parent::__construct($context);
     }
 
@@ -75,5 +83,27 @@ class Data extends AbstractHelper
     public function isEnabled($store = null)
     {
         return (bool)$this->getConfig("general/enabled", $store);
+    }
+
+    /**
+     * encode object
+     *
+     * @param mixed|Object|array
+     * @return string
+     */
+    public function encodeData($object)
+    {
+        return $this->serializer->serialize($object);
+    }
+
+    /**
+     * decode string
+     *
+     * @param string
+     * @return mixed|array|Object
+     */
+    public function decodeData($string)
+    {
+        return $this->serializer->unserialize($string);
     }
 }

@@ -4,6 +4,8 @@
 		<lofmobilesociallogin>
 			<general>
 				<enabled>1</enabled>
+                <google_sign_in_api/>
+                <facebook_app_id/>
 			</general>
 		</lofmobilesociallogin>
 	</default>
